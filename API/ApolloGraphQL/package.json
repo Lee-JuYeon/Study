@@ -1,0 +1,19 @@
+{
+  "name": "apollographql",
+  "version": "1.0.0",
+  "description": "GraphQL이 REST API로부터 해결한 것. 1. under-fetching     - 자격증 api를 예로 들어보면, 자격증 api에서는 자격증 이름이 아닌 코드넘버로 작성되어 있어서, 자격증 목록 api를 또 따로 request해야한다.  이러한 문제점이 under-fetching이다. 2. over-fetching     - 필요한 정보 이외에도 추가적으로 딸려오는 불필요한 데이터들이 많은 경우.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^3.12.1",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
