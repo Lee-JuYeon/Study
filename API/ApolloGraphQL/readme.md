@@ -10,3 +10,10 @@ npm install list
 npm i nodemon -D
 npm i apollo-server graphql
 
+
+작업하면서 발생한 에러들
+1. Apollo Server requires either an existing schema, moduels or typeDefs 
+    (Apollo server는 존재하는 schema나 moduels 또는 typeDefs를 가져야한다.)
+    - GraphQL이 data의 shape을 미리 알고있어야 하기 때문이다.
+        - REST API에서는 수많은 url들의 집합인데, GraphQL은 수많은 type의 집합이다.
+        GraphQL server한테 서버에 있는 data의 type을 설명해주어야한다.
