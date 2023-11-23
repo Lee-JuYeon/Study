@@ -3,11 +3,11 @@
 | Language | Certification | Algorithm | A.I
 | :--- | :--- | :--- | :--- |
   | [![Kotlin](http://img.shields.io/badge/-Kotlin-7F52FF?style=flat&logo=Kotlin&logoColor=ffffff)](https://github.com/Lee-JuYeon/Study/tree/main/Language/Kotlin) | [![LPIC-1](http://img.shields.io/badge/-LPIC%201-000000?style=flat&logo=Linux)](https://github.com/Lee-JuYeon/Study/tree/main/Certification)  ||Langchain|
-| [![Swift](http://img.shields.io/badge/-Swift-F05138?style=for-the-badge&logo=Swift&logoColor=ffffff&link=https://github.com/Lee-JuYeon/Study/tree/main/Language/Swift)](https://github.com/Lee-JuYeon/Study/tree/main/Language/Swift) | [![CCNA](http://img.shields.io/badge/-CCNA-000000?style=for-the-badge&logo=Cisco&link=https://github.com/Lee-JuYeon/Study/tree/main/Certification)](https://github.com/Lee-JuYeon/Study/tree/main/Certification)   ||LLM|
- | [![Python](http://img.shields.io/badge/-Python-3776AB?style=for-the-badge&logo=Python&logoColor=ffffff&link=https://github.com/Lee-JuYeon/Study/tree/main/Language/Python)](https://github.com/Lee-JuYeon/Study/tree/main/Language/Python) | [![정처기산업기사](http://img.shields.io/badge/-정보처리%20산업기사-000000?style=for-the-badge&link=https://github.com/Lee-JuYeon/Study/tree/main/Certification)](https://github.com/Lee-JuYeon/Study/tree/main/Certification)   ||RNN|
-| [![Rust](http://img.shields.io/badge/-Rust-CE412B?style=for-the-badge&logo=Rust&logoColor=ffffff&link=https://github.com/Lee-JuYeon/Study/tree/main/Language/Rust)](https://github.com/Lee-JuYeon/Study/tree/main/Language/Rust) | ||GAN|
-||||CNN|
-||||TransFormer|
+| [![Swift](http://img.shields.io/badge/-Swift-F05138?style=for-the-badge&logo=Swift&logoColor=ffffff)](https://github.com/Lee-JuYeon/Study/tree/main/Language/Swift) | [![LPIC-2](http://img.shields.io/badge/-LPIC-2-000000?style=for-the-badge&logo=linux)](https://github.com/Lee-JuYeon/Study/tree/main/Certification)   ||LLM|
+ | [![Python](http://img.shields.io/badge/-Python-3776AB?style=for-the-badge&logo=Python&logoColor=ffffff&link=https://github.com/Lee-JuYeon/Study/tree/main/Language/Python)](https://github.com/Lee-JuYeon/Study/tree/main/Language/Python) | [![CCNA](http://img.shields.io/badge/-CCNA-000000?style=for-the-badge&logo=Cisco)](https://github.com/Lee-JuYeon/Study/tree/main/Certification)   ||RNN|
+| [![Rust](http://img.shields.io/badge/-Rust-CE412B?style=for-the-badge&logo=Rust&logoColor=ffffff)](https://github.com/Lee-JuYeon/Study/tree/main/Language/Rust) |[![CCNP](http://img.shields.io/badge/-CCNP-000000?style=for-the-badge&logo=Cisco)](https://github.com/Lee-JuYeon/Study/tree/main/Certification) ||GAN|
+||[![정처기 산업기사](http://img.shields.io/badge/-정보처리%20산업기사-000000?style=for-the-badge)](https://github.com/Lee-JuYeon/Study/tree/main/Certification)||CNN|
+||[![정처기 기사](http://img.shields.io/badge/-정보처리%20산업기사-000000?style=for-the-badge)](https://github.com/Lee-JuYeon/Study/tree/main/Certification)||TransFormer|
 ||||DRL|
 
 
