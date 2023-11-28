@@ -1,7 +1,12 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer, gql, ApolloError } = require('apollo-server');
 const mariadb = require('mariadb');
+const depthLimit = require('graphql-depth-limit');
 require("dotenv").config();
 
+
+const appOptions : Options = {
+
+}
 // Mariadb 연결 정보
 const pool = mariadb.createPool({
     host: process.env.DB_HOST,
@@ -36,6 +41,7 @@ const typeDefs = gql`
     type Query{
         readJobPortfolio(userID : String!)
         readJobPortfolios : [JobPortfolio]
+        errors : [String]
     }
 `;
 
@@ -65,12 +71,38 @@ const resolvers = {
                 if (conn) conn.end();
             }
         },
+        // allUsers: () => {
+        //     throw new Error("allUsers query failed");
+        //   },
+        // user: (_, { id }) => {
+        //     if (id < 0)
+        //       throw new ApolloError("id must be non-negative", "INVALID_ID", {
+        //         parameter: "id"
+        //       });
+        //     return {
+        //       id,
+        //       email: `test${id}@email.com`
+        //     };
+        // }
     }
 }
 
 
+const formatError = err => {
+    console.error("--- GraphQL Error ---");
+    console.error("Path:", err.path);
+    console.error("Message:", err.message);
+    console.error("Code:", err.extensions.code);
+    console.error("Original Error", err.originalError);
+    return err;
+};
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ 
+    typeDefs,
+    resolvers,
+    formatError,
+    debug: false
+});
 
 server.listen().then(({ url }) => {
    console.log(`Running on ${url}`); 

@@ -17,3 +17,17 @@ npm i apollo-server graphql
     - GraphQL이 data의 shape을 미리 알고있어야 하기 때문이다.
         - REST API에서는 수많은 url들의 집합인데, GraphQL은 수많은 type의 집합이다.
         GraphQL server한테 서버에 있는 data의 type을 설명해주어야한다.
+
+
+GraphQL 보안처리
+- timeout
+- query 길이 제한 (query lenght limit)
+- query whitelist
+- query 깊이 제한 (query depth limit)
+- query complexity
+
+GraphQL 사용자 인증
+- http 인증방식 
+    - Bearer인증방식은 client에서 서버로 요청을 보낼때 마다 http Authorization 헤더를 Bearer <인증토큰>으로 설정한다. 그러면 서버에서는 클라이언트에서 보낸 인증 토큰이 유효한지, 어떤 사용자의 토큰인지를 파악해서 사용자 인증 처리를 해줍니다.
+- 컨텍스트 레벨 인증
+    - graphQL에서 가장
