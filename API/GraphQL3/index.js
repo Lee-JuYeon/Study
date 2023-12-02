@@ -1,7 +1,8 @@
 const {
     ApolloServer,
     gql,
-    PubSub
+    AuthenticationError,
+    ForbiddenError,
 } = require("apollo-server"); // graphql server instance 생성.
 // const faker = require("faker");
 
@@ -18,30 +19,41 @@ const {
 // 우리는 이걸 'subscription'이다.
 // graphQL에서는 Apollo server가 자체적으로 pub/sub엔진을 내장하고 있다.
 
-const pubsub = new PubSub();
 
 const typeDefs = gql`
   type Query {
     ping: String
     allUsers: [User]
     user(id: Int): User
+    authenticate(username: String, password: String): String
+    me: User
   }
 
   type User {
     id: Int
     email: String
   }
-
-  type Subscription {
-    messageAdded: String
-  }
 `;
 
 const resolvers = {
   Query: {
     ping: () => "pong",
-    allUsers: () => { // 에러 핸들링 1
-        throw new Error("allUsers query failed");
+    allUsers: (parent, args, { user }) => {
+      if (!user) throw new AuthenticationError("not authenticated");
+      if (!user.roles.includes("admin"))
+        throw new ForbiddenError("not authorized");
+      return users;
+    },
+    authenticate: (parent, { username, password }) => {
+      const found = users.find(
+        user => user.username === username && user.password === password
+      );
+      console.log(found);
+      return found && found.token;
+    },
+    me: (parent, args, { user }) => {
+      if (!user) throw new AuthenticationError("not authenticated");
+      return user;
     },
     user: (_, { id }) => { // 에러 핸들링 2.
         if (id < 0)
@@ -61,14 +73,6 @@ const resolvers = {
         };
     },
   },
-  Subscription: {
-    messageAdded: {
-        /// subscription은 subscribe 속성을 갖는 객체를 필요로 한다.
-        /// asyncIterator메서드에 'messageAdded'을 넘겨주면, 
-        /// subscription은 messageAdded 이벤트 발생마다 반응.
-      subscribe: () => pubsub.asyncIterator("messageAdded"),
-    },
-  },
 };
 
 // ```
@@ -82,20 +86,47 @@ const resolvers = {
 //     });
 // }, 1000); 
 
+const users = [
+  {
+    token: "a1b2c3",
+    id: "1111",
+    email: "user@email.com",
+    username: "user",
+    password: "123",
+    roles: ["user"]
+  },
+  {
+    token: "e4f5g6",
+    id: "2222",
+    email: "admin@email.com",
+    username: "admin",
+    password: "456",
+    roles: ["user", "admin"]
+  }
+];
+
 const formatError = (err) => {
-    console.error("--- GraphQL Error ---");
-    console.error("Path:", err.path);
-    console.error("Message:", err.message);
-    console.error("Code:", err.extensions.code);
-    console.error("Original Error", err.originalError);
-    /// 반드시 인자로 받은 에러 객체를 다시 리턴을 해줘야 
-    /// 라이언트까지 에러 정보가 전달
-    return err; 
+  console.error("--- GraphQL Error ---");
+  console.error("Path:", err.path);
+  console.error("Message:", err.message);
+  console.error("Code:", err.extensions.code);
+  console.error("Original Error", err.originalError);
+  return err;
 };
 
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: ({ req }) => {
+      // if (!req.headers.authorization)
+      //   throw new AuthenticationError("empty token");
+      if (!req.headers.authorization) return { user: undefined };
+  
+      const token = req.headers.authorization.substr(7);
+      const user = users.find(user => user.token === token);
+      // if (!user) throw new AuthenticationError("invalid token");
+      return { user };
+    },
     formatError,
     debug: false, /// 서버에서 에러가 발생했을때 클라이언테에게 stacktrace까지 제공하는것은 보안상 권장되지 않음.
 });
