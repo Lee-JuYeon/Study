@@ -1,10 +1,10 @@
-import java.util.Properties
+import java.util.Properties // key hide ver.1
 
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
-
+// key hide ver.1
 val properties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
@@ -29,6 +29,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        //key hide ver.1
         buildConfigField("String", "aes_key", "${properties["aes_key"]}")
 
     }
@@ -59,7 +60,7 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
+        buildConfig = true //key hide ver.1
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"

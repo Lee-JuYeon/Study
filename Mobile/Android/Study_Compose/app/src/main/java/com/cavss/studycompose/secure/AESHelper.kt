@@ -16,7 +16,7 @@ import javax.crypto.spec.IvParameterSpec
 
 object AESHelper {
     /** 키를 외부에 저장할 경우 유출 위험이 있으니까 소스 코드 내에 숨겨둔다. 길이는 16자여야 한다. */
-    private val KEY_ALIAS = BuildConfig.aes_key // 키스토어 에서 사용할 별칭
+    private val KEY_ALIAS = BuildConfig.aes_key // 키스토어 에서 사용할 별칭, key hide
     private const val AndroidKeyStore = "AndroidKeyStore"
     private const val CIPHER_TRANSFORMATION = "AES/CBC/PKCS7Padding"
 
