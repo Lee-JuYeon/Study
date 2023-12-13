@@ -1,4 +1,4 @@
-const { ApolloServer, gql, ApolloError } = require('apollo-server');
+const { ApolloServer, gql, ApolloError, AuthenticationError } = require('apollo-server');
 const mariadb = require('mariadb');
 const depthLimit = require('graphql-depth-limit');
 require("dotenv").config();
@@ -41,9 +41,35 @@ const typeDefs = gql`
     type Query{
         readJobPortfolio(userID : String!)
         readJobPortfolios : [JobPortfolio]
-        errors : [String]
+
+        ping: String
+        authenticate(username: String, password: String): String
+        me: User
+        users: [User]
+    }
+
+    type User {
+        username: String!
+        email: String!
     }
 `;
+
+const users = [
+    {
+      token: "a1b2c3",
+      email: "user@email.com",
+      username: "user",
+      password: "123",
+      roles: ["user"]
+    },
+    {
+      token: "e4f5g6",
+      email: "admin@email.com",
+      username: "admin",
+      password: "456",
+      roles: ["user", "admin"]
+    }
+  ];
 
 const resolvers = {
     Query : {
@@ -84,6 +110,24 @@ const resolvers = {
         //       email: `test${id}@email.com`
         //     };
         // }
+        ping: () => "pong",
+        authenticate: (parent, { username, password }) => {
+            const found = users.find(
+                user => user.username === username && user.password === password
+            );
+            console.log(found);
+            return found && found.token;
+        },
+        me: (parent, args, { user }) => {
+            if (!user) throw new AuthenticationError("not authenticated");
+            return user;
+        },
+        users: (parent, args, { user }) => {
+            if (!user) throw new AuthenticationError("not authenticated");
+            if (!user.roles.includes("admin"))
+                throw new ForbiddenError("not authorized");
+            return users;
+        }
     }
 }
 
@@ -100,7 +144,17 @@ const formatError = err => {
 const server = new ApolloServer({ 
     typeDefs,
     resolvers,
-    formatError,
+    context: ({ req }) => { // context에서 모든 요청 정보를 인자(req)로 받는다.
+        // if (!req.headers.authorization) // 요청 받은 정보에 uathorization이 없으면,
+        //     throw new AuthenticationError("missing token"); // missing token을 내뱉는다.
+        if (!req.headers.authorization) return { user: undefined };
+
+        const token = req.headers.authorization.substring(7); // 
+        const user = users.find((user) => user.token === token); // 인증 토큰에 매칭되는 사용자가 있는지 users 배열을 검색
+        // if(!user) throw new AuthenticationError("invalid token"); // 사용자가 없다면 인증 실패 상황이므로 AuthenticationError 에러를 던짐
+        return { user };    
+    },
+    // formatError,
     debug: false
 });
 
@@ -108,17 +162,17 @@ server.listen().then(({ url }) => {
    console.log(`Running on ${url}`); 
 });
 
-CREATE TABLE JobPortfolio (
-    id VARCHAR(36) PRIMARY KEY,
-    userID VARCHAR(255),
-    hasJob BOOLEAN,
-    workMonth INT,
-    jobSkill TEXT, 
-    portfoiloURL TEXT,
-    certification TEXT, 
-    languages TEXT, 
-    education VARCHAR(255)
-);
+// CREATE TABLE JobPortfolio (
+//     id VARCHAR(36) PRIMARY KEY,
+//     userID VARCHAR(255),
+//     hasJob BOOLEAN,
+//     workMonth INT,
+//     jobSkill TEXT, 
+//     portfoiloURL TEXT,
+//     certification TEXT, 
+//     languages TEXT, 
+//     education VARCHAR(255)
+// );
 
 /*
 
