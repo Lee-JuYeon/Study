@@ -1,0 +1,33 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="model"
+            type="com.cavss.studyxml.ui.screen.menu.MenuModel" />
+
+        <variable
+            name="position"
+            type="Integer" />
+
+        <variable
+            name="clickCallback"
+            type="com.cavss.studyxml.ui.custom.recyclerview.IViewHolderClick" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@drawable/border_item_menu"
+        android:onClick="@{() -> clickCallback.onItemClick(model, position)}">
+
+        <TextView
+            android:id="@+id/text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@{model.menu}"/>
+    </LinearLayout>
+
+</layout>

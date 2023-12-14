@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StudyXML</string>
+    <string name="bottom_navi_item1">item1</string>
+    <string name="bottom_navi_item2">item2</string>
 </resources>
