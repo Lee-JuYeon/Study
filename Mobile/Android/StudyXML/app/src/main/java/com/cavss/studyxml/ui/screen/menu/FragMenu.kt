@@ -54,9 +54,9 @@ class FragMenu : Fragment() {
                         Menu.RecyclerView.rawValue -> {
                             menuVM.setFragmentType(Menu.RecyclerView)
                         }
-                        Menu.LocationBasedAR.rawValue -> {
-                            menuVM.setFragmentType(Menu.LocationBasedAR)
-                        }
+//                        Menu.LocationBasedAR.rawValue -> {
+//                            menuVM.setFragmentType(Menu.LocationBasedAR)
+//                        }
                         Menu.BottomNavigation.rawValue -> {
                             menuVM.setFragmentType(Menu.BottomNavigation)
                         }

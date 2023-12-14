@@ -40,7 +40,7 @@ class MenuVM() : ViewModel() {
         setMenuList(
             listOf(
                 MenuModel(Menu.RecyclerView.rawValue),
-                MenuModel(Menu.LocationBasedAR.rawValue),
+//                MenuModel(Menu.LocationBasedAR.rawValue),
                 MenuModel(Menu.BottomNavigation.rawValue),
                 MenuModel(Menu.Fragment.rawValue),
                 MenuModel(Menu.ViewPager2.rawValue),
