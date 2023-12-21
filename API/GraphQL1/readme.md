@@ -69,8 +69,8 @@ PostgreSQL에 접속하기 위해선 PostgreSQL에 등록된 user로 먼저 접�
 ## 🙋🏻 계정 CRUD
 ```
 // Create
-create user User1 password 123asdf
-create user User1 password 123asdf superuser <- superuser 권한 부여
+create user User1 with password '123asdf'
+create user User1 with password '123asdf' superuser <- superuser 권한 부여
 
 // Delete
 drop user User1;
@@ -126,4 +126,62 @@ grant all privileges on testDB to TestUser;
 // db 터미널에서 나옴.
 exit;
 ```
+
+# 📡 SSH
+```
+* RockyLinux 레파지토리 추가
+sudo yum install -y epel-release 
+
+* SSH 패키지 설치
+sudo yum install -y openssh-server openssh-clients
+
+* SSH 서비스 시작
+sudo systemctl start sshd
+
+* SSH 서비스 활성화
+sudo systemctl enable sshd
+
+* SSH가 22번 포트 사용하는지 확인
+sudo netstat -an | grep 22
+
+* 아래처럼뜨면 22번 포트 사용중인걸로 확인.
+tcp 0 0 0.0.0.0:22 0.0.0.0:* LISTEN
+tcp6 0 0:::22  :::* LISTEN 
+```
+
+## 🧯 방화벽(Firewall)
+```
+* 방화벽 서비스 시작
+sudo systemctl start firewalld
+
+* 방화벽 활성화
+sudo systemctl enable firewalld
+
+* 기존 방화벽 규칙 삭제
+firewall-cmd --zone=public --remove-all
+
+* 모든 IP 차단
+firewall-cmd --zone=public --add-source=0.0.0.0/0 --permanent
+
+* 특정 IP 주소 허용
+firewall-cmd --zone=public --add-source=내IP --permanent
+
+* SSH 포트(포트 22) 허용
+firewall-cmd --zone=public --add-port=22/tcp --permanent
+
+* 방화벽 규칙 적용
+firewall-cmd --reload
+sudo systemctl restart firewalld
+
+```
+
+## 🌐 내 컴퓨터에서 SSH로 원격접속
+```
+* 22번포트로 접속
+ssh -p 22 가상머신user@아이피
+
+* 그냥 접속
+ssh 가상머신user@아이피
+```
+
 
