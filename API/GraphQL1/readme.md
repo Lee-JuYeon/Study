@@ -66,10 +66,18 @@ PostgreSQL에 접속하기 위해선 PostgreSQL에 등록된 user로 먼저 접�
  psql  <- db 접속
 ```
 
-## 🙋🏻 계정 생성 
+## 🙋🏻 계정 CRUD
 ```
+// Create
 create user User1 password 123asdf
-create userUser1 password 123asdf superuser <- superuser 권한 부여
+create user User1 password 123asdf superuser <- superuser 권한 부여
+
+// Delete
+drop user User1;
+
+// Update
+alter user User1 nosuperuser;  <- superuser 권한 해제
+
 ```
 
 ## ❗️ 접속시도시 인증오류가 발생한다면? 
