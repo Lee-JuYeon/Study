@@ -1,136 +1,27 @@
-const { ApolloServer, gql, ApolloError, AuthenticationError } = require('apollo-server');
-const mariadb = require('mariadb');
+const { 
+    ApolloServer,
+    gql, 
+    ApolloError, 
+    AuthenticationError,
+    ApolloClient,
+    InMemoryCache 
+} = require('apollo-server');
 const depthLimit = require('graphql-depth-limit');
+const customAuthentication = require("./auth/auth");
+
+const userDB = require("./db/users");
+const mariaDB = require("./db/mariadb");
+const postgraphileDB = require("./db/postgraphile");
+
+const customResolver = require("./resolvers/customResolver");
+const customTypeDefs = require("./typeDefs/customTypeDefs");
+
 require("dotenv").config();
 
-
-const appOptions : Options = {
-
-}
-// Mariadb 연결 정보
-const pool = mariadb.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PW,
-    database: process.env.DB_DATABASE,
-    connectionLimit: process.env.DB_CONNECTION_LIMIT // 연결 수 제한 (선택 사항)
+const client = new ApolloClient({
+    link: createHttpLink({ uri: "https://countries.trevorblades.com" }),
+    cache: new InMemoryCache()
 });
-
-const typeDefs = gql`
-    type JobPortfolio {
-        id : ID!
-        userID : String
-        hasJob : Bool
-        workMonth : Int
-        jobSkill : [String]
-        portfolioURL : [String]
-        certification : [String]
-        languages : [String]
-        education : String
-        workedCompany : [WorkedCompany]
-    }
-
-    type WorkedCompany {
-        userID : ID!
-        companyTitle : String
-        workStart : String
-        workEnd : String
-        position : String
-    }
-
-    type Query{
-        readJobPortfolio(userID : String!)
-        readJobPortfolios : [JobPortfolio]
-
-        ping: String
-        authenticate(username: String, password: String): String
-        me: User
-        users: [User]
-    }
-
-    type User {
-        username: String!
-        email: String!
-    }
-`;
-
-const users = [
-    {
-      token: "a1b2c3",
-      email: "user@email.com",
-      username: "user",
-      password: "123",
-      roles: ["user"]
-    },
-    {
-      token: "e4f5g6",
-      email: "admin@email.com",
-      username: "admin",
-      password: "456",
-      roles: ["user", "admin"]
-    }
-  ];
-
-const resolvers = {
-    Query : {
-        readJobPortfolio : async () => {
-            let conn;
-            try {
-                conn = await pool.getConnection();
-                const rows = await conn.query('SELECT * FROM users');
-                return rows;
-            } catch (err) {
-                throw err;
-            } finally {
-                if (conn) conn.end();
-            }
-        },
-        readJobPortfolios : async () => {
-            let conn;
-            try {
-                conn = await pool.getConnection();
-                const rows = await conn.query('SELECT * FROM users');
-                return rows;
-            } catch (err) {
-                throw err;
-            } finally {
-                if (conn) conn.end();
-            }
-        },
-        // allUsers: () => {
-        //     throw new Error("allUsers query failed");
-        //   },
-        // user: (_, { id }) => {
-        //     if (id < 0)
-        //       throw new ApolloError("id must be non-negative", "INVALID_ID", {
-        //         parameter: "id"
-        //       });
-        //     return {
-        //       id,
-        //       email: `test${id}@email.com`
-        //     };
-        // }
-        ping: () => "pong",
-        authenticate: (parent, { username, password }) => {
-            const found = users.find(
-                user => user.username === username && user.password === password
-            );
-            console.log(found);
-            return found && found.token;
-        },
-        me: (parent, args, { user }) => {
-            if (!user) throw new AuthenticationError("not authenticated");
-            return user;
-        },
-        users: (parent, args, { user }) => {
-            if (!user) throw new AuthenticationError("not authenticated");
-            if (!user.roles.includes("admin"))
-                throw new ForbiddenError("not authorized");
-            return users;
-        }
-    }
-}
-
 
 const formatError = err => {
     console.error("--- GraphQL Error ---");
@@ -142,19 +33,32 @@ const formatError = err => {
 };
 
 const server = new ApolloServer({ 
-    typeDefs,
-    resolvers,
-    context: ({ req }) => { // context에서 모든 요청 정보를 인자(req)로 받는다.
-        // if (!req.headers.authorization) // 요청 받은 정보에 uathorization이 없으면,
-        //     throw new AuthenticationError("missing token"); // missing token을 내뱉는다.
-        if (!req.headers.authorization) return { user: undefined };
+    customTypeDefs,
+    customResolver,
+    context: ({ req }) => { 
+        // context에서 모든 요청 정보를 인자(req)로 받으며, 
+        // 모든 resolver 함수에서 공유할 수 있는 데이터를 제공하는 역
+        if (!req.headers.authorization.refreshToken) throw new AuthenticationError("missing refreshToken");
 
-        const token = req.headers.authorization.substring(7); // 
+        const accessToken = req.headers.authorization.split(" ")[1];
+        if (!accessToken) {
+            return null;
+          }
+
         const user = users.find((user) => user.token === token); // 인증 토큰에 매칭되는 사용자가 있는지 users 배열을 검색
         // if(!user) throw new AuthenticationError("invalid token"); // 사용자가 없다면 인증 실패 상황이므로 AuthenticationError 에러를 던짐
-        return { user };    
+        
+        const user = AuthService.getUser(req);
+
+        return { 
+            user: user, 
+            db: { 
+                users, 
+                notes 
+            } 
+        };
     },
-    // formatError,
+    formatError,
     debug: false
 });
 

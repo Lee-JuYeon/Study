@@ -11,10 +11,13 @@
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^3.12.1",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
     "graphql": "^16.8.1",
     "graphql-depth-limit": "^1.1.0",
-    "mariadb": "^3.2.2"
+    "jsonwebtoken": "^9.0.2",
+    "mariadb": "^3.2.2",
+    "postgraphile": "^4.13.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

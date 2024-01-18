@@ -58,7 +58,7 @@ PostgreSQL에 접속하기 위해선 PostgreSQL에 등록된 user로 먼저 접�
 
 ## 🤝🏻 계정에 접근하여 DB에 접근하기
 ```
- // postgres는 PostgreSQL에서 초기 생성된 슈퍼 계정이다.
+* postgres는 PostgreSQL에서 초기 생성된 슈퍼 계정이다.
 
  psql -U postgres <- postgres 계정으로 psql에 접근
 
@@ -68,14 +68,18 @@ PostgreSQL에 접속하기 위해선 PostgreSQL에 등록된 user로 먼저 접�
 
 ## 🙋🏻 계정 CRUD
 ```
-// Create
+* Read ( 유저 검색 )
+SELECT * FROM pg_catalog.pg_user;
+
+
+* Create
 create user User1 with password '123asdf'
 create user User1 with password '123asdf' superuser <- superuser 권한 부여
 
-// Delete
+* Delete
 drop user User1;
 
-// Update
+* Update
 alter user User1 nosuperuser;  <- superuser 권한 해제
 
 ```
@@ -101,31 +105,24 @@ alter user User1 nosuperuser;  <- superuser 권한 해제
 `systemctl restart postgresql`
 
 
-## 💾 DB생성
-
+## 💾 DB
 ```
-// DB 생성
+* DB 생성
 create database TestDB; 
 
-// db 생성과 동시 유저 부여 ( 해당 유저는 해당 DB의 모든 권한을 가지게 된다)
+* db 생성과 동시 유저 부여 ( 해당 유저는 해당 DB의 모든 권한을 가지게 된다)
 create database db_name with owner user_name;
 
-// db 사용 권한 부여
+* db 사용 권한 부여
 grant 권한 on db_name to user_namel
 grant select on testDB to TestUser;
 grant all privileges on testDB to TestUser;
 
+* db 터미널 종료
+\q ( 계정에서 로그아웃 )
+exit ( DB 터미널에서 나옴 )
 ```
 
-
-## 👋🏻 종료
-```
-// 계정에서 로그아웃.
-\q 
-
-// db 터미널에서 나옴.
-exit;
-```
 
 # 📡 SSH
 ```
@@ -182,6 +179,51 @@ ssh -p 22 가상머신user@아이피
 
 * 그냥 접속
 ssh 가상머신user@아이피
+
+* SSH 종료
+exit
 ```
 
 
+## user생성하고 db생성후 데이터 관리
+```
+* client용 user생성 
+create user testclient with password 'vlwk!)1928'
+
+* admin용 user생성 
+create user testadmin with password 'vlwk!)1928'
+
+* test_db이름으로 데이터베이스 생성. testAdmin이라는 user는 해당 db의 모든 권한을 가짐.
+create database test_db with owner testAdmin
+
+* testclient는 test_db의 read권한만 가짐.
+
+여기서 이상한게 있다.
+
+postgres=# \c testdb testadmin
+이런식으로 testadmin계정으로 test_db에 접속하려면, 
+'치명적오류:  사용자 "testadmin"의 peer 인증을 실패했습니다.' 이런 에러가 발생한다.
+testadmin의 비밀번호를 업데이트 하는 방법이 있는데, 해당 방법으로는 해결이 안되어서 pg_hba.conf파일을 설정하는 방법으로 시도했다.
+
+sudo find / -name pg_hba.conf 커맨드를 이용하여 pg_hba.conf파일 위치를 찾아보자.
+cd /var/lib/pgsql/data/pg_hba.conf 
+cd로 디렉토리를 이동하려니 권한이 막혀있어서 그냥 vi로 파일을 열었다.
+sudo vi /var/lib/pgsql/data/pg_hba.conf
+아래로 쭉내려서 peer부분을 md5로 고치고 저장.
+sudo systemctl restart postgresql
+
+근데 su postgres로 접근하려다 보니
+'psql: error: 치명적오류:  사용자 "postgres"의 password 인증을 실패했습니다'이런 에러가 발생하는거다.
+
+뭔가 이상해서 다시 pg_hba.conf파일을 열어 md5로 수정한 것을 peer로 되돌려놓고 sudo systemctl restart postgresql이후에 다시 su postgres하니깐, 이번엔 에러가 안뜸.
+
+문제는 peer로 바꾼것이 문제인것인걸 파악함.
+이번엔 pg_hba.conf에서 peer부분을 모드 md5로 바꾸고 postgresql을 재시작하고 다시 돌려보니 postgres계정으로 성공적으로 psql에 진입함.
+
+* 파일설정
+sudo find / -name postgresql.conf 
+sudo vi /var/lib/pgsql/data/postgresql.conf 
+'Connections and authentication'카테고리에서 
+listen_addresses = 'localhost' -> '*'으로 수정.
+
+```
