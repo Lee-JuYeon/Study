@@ -3,7 +3,7 @@ const dbWorks = require('../dbWorks')
 
 const typeDefs = gql`
     type Equipment implements InterfaceExample  {
-        id: String
+        id: ID!
         used_by: Role!
         count: Int
         new_or_used: NewOrUsed!
