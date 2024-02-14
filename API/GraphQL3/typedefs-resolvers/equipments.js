@@ -2,7 +2,7 @@ const { gql } = require('apollo-server')
 const dbWorks = require('../dbWorks')
 
 const typeDefs = gql`
-    type Equipment {
+    type Equipment implements InterfaceExample  {
         id: String
         used_by: Role!
         count: Int
