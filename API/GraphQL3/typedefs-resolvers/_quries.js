@@ -9,6 +9,10 @@ const typeDefs = gql`
             blood_type: BloodType
             from: String
         ): [People]
+        peoplePageinated(
+            page: Int!,
+            per_page: Int!
+        ): [People]
         equipments: [Equipment]
         equipmentAdvs: [EquipmentAdv]
         softwares: [Software]

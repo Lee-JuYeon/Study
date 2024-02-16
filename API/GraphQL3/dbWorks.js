@@ -12,7 +12,7 @@ const dataFiltered = (which, args) => {
         }, true)
     })
 
-    // 페이징
+    // 페이징, pagenation
     if (args.page && args.per_page) {
         result = result.slice(
             (args.page - 1) * args.per_page, 
